@@ -14,14 +14,18 @@ settings = {
 }
 
 API_TOKEN = open('secrets.txt').read().strip('\n')
-GEOCODE_URL = '//maps.googleapis.com/maps/api/geocode/json?'
-ADDRESS_URL = '//maps.googleapis.com/maps/api/address/json?'
+GEOCODE_URL = '//maps.googleapis.com/maps/api/geocode/json'
+ADDRESS_URL = '//maps.googleapis.com/maps/api/address/json'
 
 
 class BaseHandler(web.RequestHandler):
     def write_error(self, status_code, **kwargs):
         if status_code >= 400:
             self.write(dict(SUCCESS=False, payload=[]))
+
+    def format_params(self, params) -> str:
+        ''' concat the list of form args into a urlencoded string '''
+        return ','.join(map(quote, params))
 
 
 class MainHandler(BaseHandler):

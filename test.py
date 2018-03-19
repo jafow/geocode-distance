@@ -1,9 +1,22 @@
 import unittest
+from app import BaseHandler
 
 
-class TestGeoControllerHandler(unittest.TestCase):
+class TestBaseHandler(unittest.TestCase):
     def test_format_params(self):
-        self.assertEqual(1, 1, 'test')
+        params0 = ['123 Test Ave']
+        params1 = ['123 Test Ave', 'Test City']
+        params_fail0 = {'street': '123 Test Ave', 'city': ''}
+
+        self.assertEqual(
+                BaseHandler.format_params(params0),
+                '123%20Test%20Ave',
+                'should format form args')
+
+        self.assertEqual(
+                BaseHandler.format_params(params1),
+                '123%20Test%20Ave,Test%20City',
+                'should format all keys form args')
 
 
 if __name__ == '__main__':
