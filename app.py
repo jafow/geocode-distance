@@ -78,7 +78,7 @@ class GeoHandler(BaseHandler):
 
 class ReverseHandler(BaseHandler):
     def get(self):
-        return self.render('address.html')
+        return self.render('address.html', title="Reverse Lookup")
 
     async def post(self):
         lat = self.get_argument('lat')
