@@ -78,19 +78,58 @@ class GeoHandler(BaseHandler):
 
 class ReverseHandler(BaseHandler):
     def get(self):
-        return self.write('Reverse')
+        return self.render('address.html')
+
+    async def post(self):
+        lat = self.get_argument('lat')
+        lon = self.get_argument('long')
+        if not lat or not lon:
+            # fails fast if missing args
+            return self.render(
+                    'error.html',
+                    msg='Missing required "Latitude" & "Longitude" values'
+                    )
+
+        reverse_qs = self.format_params([lat, lon])
+
+        def handle_reverse_response(payload):
+            ''' callback invoked on the response from reverse geocode API '''
+            if payload.error:
+                self.render('error.html', msg=payload.error)
+
+            res_raw = dict(json.loads(bytes.decode(payload.body)))
+
+            if res_raw['status'] != 'OK':
+                self.write(json.dumps(res))
+            else:
+                res_reverse = res_raw['results'][0]
+                geo_data = dict(
+                        SUCCESS=True,
+                        full_address=res_reverse['formatted_address'],
+                        place_id=res_reverse['place_id'])
+
+                self.write(json.dumps(geo_data))
+
+        request = httpclient.AsyncHTTPClient()
+        url = 'https:{0}?latlng={1}&key={2}'.format(
+                GEOCODE_URL,
+                reverse_qs,
+                API_TOKEN
+                )
+        res = await request.fetch(url)
+        handle_reverse_response(res)
 
 
 class DistanceHandler(BaseHandler):
     def get(self):
-        return self.write('distance')
+        return self.render('distance.html')
 
 
 def make_app():
     return web.Application([
         (r"/", MainHandler),
         (r"/geocode", GeoHandler),
-        (r"/reverse", ReverseHandler),
+        (r"/address", ReverseHandler),
         (r"/distance", DistanceHandler),
         (r"/static/(.*)", web.StaticFileHandler,
             dict(path=settings['static_path'])),
