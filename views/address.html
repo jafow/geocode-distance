@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>GeoCode App</title>
+        <link rel="stylesheet" href="/static/tachyons.min.css" title="styles" type="text/css" />
+    </head>
+    <body>
+        <h1>{{title}}</h1>
+        <form method="POST" action="/address">
+            <div class="input">
+                <label for="street">Lat.</label>
+                    <input type="text" name="lat" class="input-lat" placeholder="Ex: 34.12358" />
+                <label for="city">Long.</label>
+                    <input type="text" name="long" class="input-long"  placeholder="Ex: -104.32416" />
+            </div>
+            <button id="btn-submit" class="br">Submit</button>
+        </form>
+
+        <script src="/static/client.js" type="text/javascript" charset="utf-8" async></script>
+    </body>
+</html>
+

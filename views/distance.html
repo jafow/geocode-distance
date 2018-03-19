@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>GeoCode App</title>
+        <link rel="stylesheet" href="/static/tachyons.min.css" title="styles" type="text/css" />
+    </head>
+    <body>
+        <h1>{{title}}</h1>
+        <p>Enter two points and to get the distance between them.</p>
+        <form method="POST" action="/address">
+            <div class="input">
+                <label for="street">Lat.#1</label>
+                    <input type="text" name="lat1" class="input-lat" placeholder="Ex: 34.12358" />
+                <label for="city">Long. #1</label>
+                    <input type="text" name="long1" class="input-long"  placeholder="Ex: -104.32416" />
+                <label for="street">Lat.#2</label>
+                    <input type="text" name="lat2" class="input-lat" placeholder="Ex: 36.12358" />
+                <label for="city">Long. #2</label>
+                    <input type="text" name="long2" class="input-long"  placeholder="Ex: -114.34124" />
+            </div>
+            <button id="btn-submit" class="br">Submit</button>
+        </form>
+
+        <script src="/static/client.js" type="text/javascript" charset="utf-8" async></script>
+    </body>
+</html>
+
