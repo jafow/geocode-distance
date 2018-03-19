@@ -6,7 +6,6 @@ class TestBaseHandler(unittest.TestCase):
     def test_format_params(self):
         params0 = ['123 Test Ave']
         params1 = ['123 Test Ave', 'Test City']
-        params_fail0 = {'street': '123 Test Ave', 'city': ''}
 
         self.assertEqual(
                 BaseHandler.format_params(params0),
