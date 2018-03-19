@@ -1,4 +1,6 @@
 import os
+import json
+from urllib.parse import quote
 from tornado import ioloop, web, httpclient
 
 settings = {
@@ -38,35 +40,36 @@ class GeoHandler(BaseHandler):
                     msg='Missing required "City" & "Street" values'
                     )
 
-        geocode_params = format_params(dict(street=street, city=city))
+        geocode_req_qs = self.format_params([street, city])
 
         def handle_geo_response(payload):
             ''' callback invoked on the response from geocode API '''
             if payload.error:
                 self.render('error.html', msg=payload.error)
-            else:
-                self.render('geo-results.html', street='', body=payload.body)
 
-        def format_params(params) -> dict:
-            ''' escape, format, validate each string in a list of params '''
-            res = dict()
-            for key, val in params:
-                if not val:
-                    self.render('error.html', msg='Missing required field:{}'.format(key))
-                res[key] = val.replace(' ', '+')
+            res_raw = dict(json.loads(bytes.decode(payload.body)))
+
+            if res_raw['status'] == 'ZERO_RESULTS':
+                self.write(json.dumps(res))
+
+            else:
+                [res_geo] = res_raw['results']
+                geo_data = dict(
+                        SUCCESS=True,
+                        full_address=res_geo['formatted_address'],
+                        **res_geo['geometry'],
+                        place_id=res_geo['place_id'])
+
+                self.write(json.dumps(geo_data))
 
         request = httpclient.AsyncHTTPClient()
-        url = 'https:{0}address={1},+{2}+{3}&key={4}'.format(
+        url = 'https:{0}?address={1}&key={2}'.format(
                 GEOCODE_URL,
-                city,
+                geocode_req_qs,
                 API_TOKEN
                 )
         res = await request.fetch(url)
         handle_geo_response(res)
-
-    def format_params(params) -> dict:
-        ''' escape, format, validate each string in a list of params '''
-        return 1
 
 
 class ReverseHandler(BaseHandler):
