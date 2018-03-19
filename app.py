@@ -1,5 +1,4 @@
 import os
-import unittest
 from tornado import ioloop, web, httpclient
 
 settings = {
@@ -17,12 +16,18 @@ GEOCODE_URL = '//maps.googleapis.com/maps/api/geocode/json?'
 ADDRESS_URL = '//maps.googleapis.com/maps/api/address/json?'
 
 
-class MainController(web.RequestHandler):
+class BaseHandler(web.RequestHandler):
+    def write_error(self, status_code, **kwargs):
+        if status_code >= 400:
+            self.write(dict(SUCCESS=False, payload=[]))
+
+
+class MainHandler(BaseHandler):
     def get(self):
         return self.render('main.html', title="GeoCode App")
 
 
-class GeoController(web.RequestHandler):
+class GeoHandler(BaseHandler):
     async def post(self):
         street = self.get_argument('street')
         city = self.get_argument('city')
@@ -53,31 +58,33 @@ class GeoController(web.RequestHandler):
         request = httpclient.AsyncHTTPClient()
         url = 'https:{0}address={1},+{2}+{3}&key={4}'.format(
                 GEOCODE_URL,
-                _st,
                 city,
-                state,
                 API_TOKEN
                 )
         res = await request.fetch(url)
         handle_geo_response(res)
 
+    def format_params(params) -> dict:
+        ''' escape, format, validate each string in a list of params '''
+        return 1
 
-class ReverseController(web.RequestHandler):
+
+class ReverseHandler(BaseHandler):
     def get(self):
         return self.write('Reverse')
 
 
-class DistanceController(web.RequestHandler):
+class DistanceHandler(BaseHandler):
     def get(self):
         return self.write('distance')
 
 
 def make_app():
     return web.Application([
-        (r"/", MainController),
-        (r"/geocode", GeoController),
-        (r"/reverse", ReverseController),
-        (r"/distance", DistanceController),
+        (r"/", MainHandler),
+        (r"/geocode", GeoHandler),
+        (r"/reverse", ReverseHandler),
+        (r"/distance", DistanceHandler),
         (r"/static/(.*)", web.StaticFileHandler,
             dict(path=settings['static_path'])),
         ], **settings)
