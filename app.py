@@ -1,5 +1,6 @@
 import os
 import json
+import utils.distance as d
 from urllib.parse import quote
 from tornado import ioloop, web, httpclient
 
@@ -12,6 +13,7 @@ settings = {
     "template_path":  os.path.join(os.path.dirname(__file__), "views"),
     "compiled_template_cache": False
 }
+
 
 API_TOKEN = open('secrets.txt').read().strip('\n')
 GEOCODE_URL = '//maps.googleapis.com/maps/api/geocode/json'
