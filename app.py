@@ -8,7 +8,7 @@ settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
     "templates": os.path.join(os.path.dirname(__file__), "views"),
     "debug": False,
-    "autoreload": True,
+    "autoreload": False,
     "template_path":  os.path.join(os.path.dirname(__file__), "views"),
     "compiled_template_cache": False
 }
@@ -79,7 +79,7 @@ class GeoHandler(BaseHandler):
 
 class ReverseHandler(BaseHandler):
     def get(self):
-        return self.render('distance.html', title="Reverse Lookup")
+        return self.render('address.html', title="Reverse Lookup")
 
     async def post(self):
         lat = self.get_argument('lat')
