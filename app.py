@@ -124,7 +124,28 @@ class ReverseHandler(BaseHandler):
 
 class DistanceHandler(BaseHandler):
     def get(self):
-        return self.render('distance.html')
+        return self.render('distance.html', tile="Distance")
+
+    async def post(self):
+        sorted_keys = sorted(self.request.arguments.keys())
+        args_list = []
+        for x in sorted_keys:
+            pt = self.get_argument(x)
+            if not pt:
+                return self.render(
+                    'error.html',
+                    msg='Missing required "Latitude" & "Longitude" values')
+            else:
+                args_list.append(float(pt))
+
+        [lat1, lat2, lon1, lon2] = args_list
+
+        distance = d.get_distance(lat1, lat2, lon1, lon2)
+        res = dict(
+                SUCCESS=True,
+                distance=distance)
+
+        self.write(json.dumps(res))
 
 
 def make_app():
