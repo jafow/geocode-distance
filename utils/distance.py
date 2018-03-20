@@ -5,7 +5,6 @@ import math
 def get_distance(lat1, lat2, lon1, lon2) -> float:
     ''' derive the spherical distance between two points '''
     RADIUS = 6731
-    print('{0}, {1}, {2}, {3}'.format(lat1, lat2, lon1, lon2))
 
     def haversine(x):
         return pow(math.sin(x/2), 2)
