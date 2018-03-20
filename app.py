@@ -6,9 +6,8 @@ from tornado import ioloop, web, httpclient
 
 settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
-    # "xsrf_cookies": True,
     "templates": os.path.join(os.path.dirname(__file__), "views"),
-    "debug": True,
+    "debug": False,
     "autoreload": True,
     "template_path":  os.path.join(os.path.dirname(__file__), "views"),
     "compiled_template_cache": False
@@ -80,7 +79,7 @@ class GeoHandler(BaseHandler):
 
 class ReverseHandler(BaseHandler):
     def get(self):
-        return self.render('address.html', title="Reverse Lookup")
+        return self.render('distance.html', title="Reverse Lookup")
 
     async def post(self):
         lat = self.get_argument('lat')
@@ -124,7 +123,7 @@ class ReverseHandler(BaseHandler):
 
 class DistanceHandler(BaseHandler):
     def get(self):
-        return self.render('distance.html', tile="Distance")
+        return self.render('distance.html', title="Distance")
 
     async def post(self):
         sorted_keys = sorted(self.request.arguments.keys())
