@@ -20,6 +20,11 @@ ADDRESS_URL = '//maps.googleapis.com/maps/api/address/json'
 
 
 class BaseHandler(web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        self.set_header('Access-Control-Allow-Headers', 'x-requested-with')
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
     def write_error(self, status_code, **kwargs):
         if status_code >= 400:
             self.write(dict(SUCCESS=False, payload=[]))
@@ -27,6 +32,11 @@ class BaseHandler(web.RequestHandler):
     def format_params(self, params) -> str:
         ''' concat the list of form args into a urlencoded string '''
         return ','.join(map(quote, params))
+
+    def options(self):
+        # no body
+        self.set_status(204)
+        self.finish()
 
 
 class MainHandler(BaseHandler):
