@@ -50,17 +50,20 @@ class GeoHandler(BaseHandler):
         city = self.get_argument('city')
         if not street or not city:
             # fails fast if missing args
-            return self.render(
-                    'error.html',
-                    msg='Missing required "City" & "Street" values'
-                    )
+            return self.write(json.dumps({
+                'SUCCESS': False,
+                'error': 'Missing required "City" & "Street" values'
+                }))
 
         geocode_req_qs = self.format_params([street, city])
 
         def handle_geo_response(payload):
             ''' callback invoked on the response from geocode API '''
             if payload.error:
-                self.render('error.html', msg=payload.error)
+                return self.write(json.dumps({
+                    'SUCCESS': False,
+                    'error': payload.error
+                    }))
 
             res_raw = dict(json.loads(bytes.decode(payload.body)))
 
@@ -96,17 +99,20 @@ class ReverseHandler(BaseHandler):
         lon = self.get_argument('long')
         if not lat or not lon:
             # fails fast if missing args
-            return self.render(
-                    'error.html',
-                    msg='Missing required "Latitude" & "Longitude" values'
-                    )
+            return self.write(json.dumps({
+                'SUCCESS': False,
+                'error': 'Missing required "Latitude" & "Longitude" values'
+                }))
 
         reverse_qs = self.format_params([lat, lon])
 
         def handle_reverse_response(payload):
             ''' callback invoked on the response from reverse geocode API '''
             if payload.error:
-                self.render('error.html', msg=payload.error)
+                return self.write(json.dumps({
+                    'SUCCESS': False,
+                    'error': payload.error
+                    }))
 
             res_raw = dict(json.loads(bytes.decode(payload.body)))
 
@@ -141,9 +147,10 @@ class DistanceHandler(BaseHandler):
         for x in sorted_keys:
             pt = self.get_argument(x)
             if not pt:
-                return self.render(
-                    'error.html',
-                    msg='Missing required "Latitude" & "Longitude" values')
+                return self.write(json.dumps({
+                    'SUCCESS': False,
+                    'error': 'Missing required "Latitude" & "Longitude" values'
+                    }))
             else:
                 args_list.append(float(pt))
 
